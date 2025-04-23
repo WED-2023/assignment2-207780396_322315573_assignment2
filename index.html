@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="description" content="משחק חלליות - HTML5, CSS3 ו-JavaScript">
+    <title>משחק חלליות</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <div id="wrapper">
+        <!-- Header -->
+        <header>
+            <div id="logo">
+                <img src="logo.png" alt="לוגו משחק חלליות">
+            </div>
+            <h1>משחק חלליות</h1>
+        </header>
+
+        <!-- Menu -->
+        <nav>
+            <ul>
+                <li><a href="#" id="welcomeLink">דף הבית</a></li>
+                <li><a href="#" id="aboutLink">אודות</a></li>
+                <li><a href="#" id="logoutLink">התנתק</a></li>
+            </ul>
+        </nav>
+
+        <!-- Content - מסכים מתחלפים -->
+        <div id="content">
+            <!-- Welcome Screen -->
+            <div id="welcomeScreen" class="screen active">
+                <div class="logo-container">
+                    <img src="logo.png" alt="לוגו משחק חלליות">
+                    <h2>ברוכים הבאים למשחק חלליות</h2>
+                    <p>יובל ורד- 207780396<br>
+                        נעם וקנין- 322315573
+                    </p>
+                    <div class="buttons">
+                        <button id="registerBtn">הרשמה</button>
+                        <button id="loginBtn">התחברות</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Registration Screen -->
+            <div id="registerScreen" class="screen">
+                <h2>הרשמה</h2>
+                <form id="registerForm">
+                    <div class="form-group">
+                        <label for="username">שם משתמש:</label>
+                        <input type="text" id="username" name="username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">סיסמה:</label>
+                        <input type="password" id="password" name="password" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirmPassword">אימות סיסמה:</label>
+                        <input type="password" id="confirmPassword" name="confirmPassword" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="firstName">שם פרטי:</label>
+                        <input type="text" id="firstName" name="firstName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="lastName">שם משפחה:</label>
+                        <input type="text" id="lastName" name="lastName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">אימייל:</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label>תאריך לידה:</label>
+                        <div class="date-inputs">
+                            <select id="birthDay" name="birthDay" required>
+                                <option value="">יום</option>
+                                <!-- יתמלא ע"י JavaScript -->
+                            </select>
+                            <select id="birthMonth" name="birthMonth" required>
+                                <option value="">חודש</option>
+                                <!-- יתמלא ע"י JavaScript -->
+                            </select>
+                            <select id="birthYear" name="birthYear" required>
+                                <option value="">שנה</option>
+                                <!-- יתמלא ע"י JavaScript -->
+                            </select>
+                        </div>
+                    </div>
+                    <button type="submit">הרשם</button>
+                </form>
+            </div>
+
+            <!-- Login Screen -->
+            <div id="loginScreen" class="screen">
+                <h2>התחברות</h2>
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label for="loginUsername">שם משתמש:</label>
+                        <input type="text" id="loginUsername" name="loginUsername" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="loginPassword">סיסמה:</label>
+                        <input type="password" id="loginPassword" name="loginPassword" required>
+                    </div>
+                    <button type="submit">התחבר</button>
+                </form>
+                <div id="loginError" class="error-message"></div>
+            </div>
+
+            <!-- Configuration Screen -->
+            <div id="configScreen" class="screen">
+                <h2>הגדרות משחק</h2>
+                <form id="configForm">
+                    <div class="form-group">
+                        <label for="shootKey">מקש יריה:</label>
+                        <select id="shootKey" name="shootKey">
+                            <option value="32">רווח</option>
+                            <!-- אפשרויות נוספות יתווספו ע"י JavaScript -->
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="gameTime">זמן משחק (בדקות):</label>
+                        <input type="number" id="gameTime" name="gameTime" min="2" value="2">
+                    </div>
+                    <div class="form-group">
+                        <label>החללית שלך:</label>
+                        <div class="spaceship-preview">
+                            <img src="good.png" alt="החללית שלך" width="50">
+                        </div>
+                    </div>
+                    <button type="submit">התחל משחק</button>
+                </form>
+            </div>
+
+            <!-- Game Screen -->
+            <div id="gameScreen" class="screen">
+                <div class="game-status">
+                    <div class="score">ניקוד: <span id="score">0</span></div>
+                    <div class="lives">חיים: <span id="lives">3</span></div>
+                    <div class="time">זמן: <span id="time">02:00</span></div>
+                </div>
+                <div id="gameCanvas">
+                    <!-- כאן יצויר המשחק -->
+                    <!-- תמונת החללית הטובה תיטען דינמית מקובץ "good.png" -->
+                </div>
+                <button id="newGameBtn">משחק חדש</button>
+            </div>
+
+            <!-- Game Over Screen -->
+            <div id="gameOverScreen" class="screen">
+                <h2 id="gameOverMessage">סיום המשחק</h2>
+                <div id="finalScore">ניקוד סופי: <span>0</span></div>
+                <div id="highScores">
+                    <h3>שיאים אישיים</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>משחק</th>
+                                <th>ניקוד</th>
+                            </tr>
+                        </thead>
+                        <tbody id="highScoresList">
+                            <!-- יתמלא ע"י JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+                <button id="playAgainBtn">שחק שוב</button>
+            </div>
+        </div>
+
+        <!-- Modal Dialog for About -->
+        <div id="aboutModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2>אודות</h2>
+                <p>מגישים: יובל ורד 207780396, נעם וקנין 322315573</p>
+                <p>תרגיל 2 - קורס סביבות פיתוח באינטרנט</p>
+                <p>לא נעשה שימוש ב-Template, השתמשנו ב-jQuery לטיפול בפונקציונליות ה-Modal.</p>
+                
+                <h3>דמויות המשחק:</h3>
+                <div class="spaceship-gallery">
+                    <div class="spaceship-preview-item">
+                        <img src="good.png" alt="החללית שלך" width="50">
+                        <p>החללית שלך</p>
+                    </div>
+                    <div class="spaceship-preview-item">
+                        <img src="spaceship4.png" alt="חללית אויב - 20 נקודות" width="50">
+                        <p>חללית אויב - 20 נקודות</p>
+                    </div>
+                    <div class="spaceship-preview-item">
+                        <img src="spaceship3.png" alt="חללית אויב - 15 נקודות" width="50">
+                        <p>חללית אויב - 15 נקודות</p>
+                    </div>
+                    <div class="spaceship-preview-item">
+                        <img src="spaceship2.png" alt="חללית אויב - 10 נקודות" width="50">
+                        <p>חללית אויב - 10 נקודות</p>
+                    </div>
+                    <div class="spaceship-preview-item">
+                        <img src="spaceship1.png" alt="חללית אויב - 5 נקודות" width="50">
+                        <p>חללית אויב - 5 נקודות</p>
+                    </div>
+                </div>
+                
+                <h3>הוראות משחק:</h3>
+                <ul>
+                    <li>השתמש בחיצים כדי להזיז את החללית הטובה</li>
+                    <li>השתמש במקש שבחרת (ברירת מחדל: רווח) כדי לירות</li>
+                    <li>הימנע מפגיעה של כדורי האויב</li>
+                    <li>השמד את כל החלליות הרעות כדי לנצח</li>
+                </ul>
+                <h3>קשיים בפיתוח:</h3>
+                <p>האתגר העיקרי היה יצירת מערכת התנגשויות ליריות ולחלליות וכן עיצוב נכון שיבליט את כל חלקי המשחק</p>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer>
+            <p>לשאלות ובעיות: yuvalve@post.bgu.ac.il</p>
+        </footer>
+    </div>
+
+    <!-- Audio Elements -->
+    <audio id="backgroundMusic" loop>
+        <source src="background_music.mp4" type="audio/mpeg">
+    </audio>
+    <audio id="shootSound">
+        <source src="good_music.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="explosionSound">
+        <source src="gameover_sound.mp4" type="audio/mpeg">
+    </audio>
+    <audio id="hitSound">
+        <source src="bad_music.mp4" type="audio/mpeg">
+    </audio>
+
+    <script src="script.js"></script>
+</body>
+</html>
