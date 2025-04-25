@@ -458,6 +458,9 @@ function createEnemyShips() {
 
 function startGameTimers() {
     // Game timer (countdown)
+    gameState.timeRemaining = gameConfig.gameTime * 60; // Convert to seconds
+    updateTimer();
+    
     gameState.timer = setInterval(function() {
         gameState.timeRemaining--;
         updateTimer();
@@ -827,132 +830,132 @@ $('#time').text(`${minutes.toString().padStart(2, '0')}:${seconds.toString().pad
 
 // End game
 function endGame(reason) {
-// Stop game
-stopGame();
+    // Stop game
+    stopGame();
 
-// Set game over message
-let message = '';
-let isHighScore = false;
+    // Set game over message
+    let message = '';
+    let isHighScore = false;
 
-switch(reason) {
-    case 'win':
-        message = '<span dir="ltr">Champion!</span>';
-        isHighScore = true;
-        break;
-    case 'lives':
-        message = '<span dir="ltr">You Lost!</span>';
-        isHighScore = true;
-        break;
-    case 'time':
-        if (gameState.score < 100) {
-            message = '<span dir="ltr">You can do better!</span>';
-        } else {
-            message = '<span dir="ltr">Winner!</span>';
+    switch(reason) {
+        case 'win':
+            message = '<span dir="ltr">Champion!</span>';
+            isHighScore = true;
+            break;
+        case 'lives':
+            message = '<span dir="ltr">You Lost!</span>';
+            isHighScore = true;
+            break;
+        case 'time':
+            if (gameState.score < 100) {
+                message = '<span dir="ltr">You can do better!</span>';
+            } else {
+                message = '<span dir="ltr">Winner!</span>';
+            }
+            isHighScore = true;
+            break;
+    }
+
+    // Update high scores if applicable
+    if (isHighScore && currentUser) {
+        // קידום מונה המשחקים
+        if (!gameCounter[currentUser.username]) {
+            gameCounter[currentUser.username] = 0;
         }
-        isHighScore = true;
-        break;
-}
-
-// Update high scores if applicable
-if (isHighScore && currentUser) {
-    // קידום מונה המשחקים
-    if (!gameCounter[currentUser.username]) {
-        gameCounter[currentUser.username] = 0;
-    }
-    gameCounter[currentUser.username]++;
-    
-    // Add score to user's high scores
-    if (!highScores[currentUser.username]) {
-        highScores[currentUser.username] = [];
-    }
-    
-    // שמירת הניקוד יחד עם מספר המשחק
-    const currentGameNumber = gameCounter[currentUser.username];
-    highScores[currentUser.username].push({
-        gameNumber: currentGameNumber,
-        score: gameState.score
-    });
-    
-    // מיון ציונים לפי ניקוד - מהגבוה לנמוך
-    highScores[currentUser.username].sort((a, b) => b.score - a.score);
-}
-
-// Show game over screen
-$('#gameOverMessage').html(message);
-$('#finalScore span').text(gameState.score);
-
-// Populate high scores table
-const highScoresList = $('#highScoresList');
-highScoresList.empty();
-
-if (currentUser && highScores[currentUser.username]) {
-    // מצא את המשחק האחרון לפי gameCounter
-    const latestGameNumber = gameCounter[currentUser.username];
-    
-    highScores[currentUser.username].forEach((scoreObj, index) => {
-        // בדוק אם זה המשחק האחרון לפי מספר המשחק
-        const isLatestGame = (scoreObj.gameNumber === latestGameNumber);
-        const rowClass = isLatestGame ? 'latest-game' : '';
+        gameCounter[currentUser.username]++;
         
-        highScoresList.append(`
-            <tr class="${rowClass}">
-                <td>${scoreObj.gameNumber}</td>
-                <td>${scoreObj.score}</td>
-            </tr>
-        `);
-    });
-}
+        // Add score to user's high scores
+        if (!highScores[currentUser.username]) {
+            highScores[currentUser.username] = [];
+        }
+        
+        // שמירת הניקוד יחד עם מספר המשחק
+        const currentGameNumber = gameCounter[currentUser.username];
+        highScores[currentUser.username].push({
+            gameNumber: currentGameNumber,
+            score: gameState.score
+        });
+        
+        // מיון ציונים לפי ניקוד - מהגבוה לנמוך
+        highScores[currentUser.username].sort((a, b) => b.score - a.score);
+    }
 
-showScreen('gameOverScreen');
+    // Show game over screen
+    $('#gameOverMessage').html(message);
+    $('#finalScore span').text(gameState.score);
+
+    // Populate high scores table
+    const highScoresList = $('#highScoresList');
+    highScoresList.empty();
+
+    if (currentUser && highScores[currentUser.username]) {
+        // מצא את המשחק האחרון לפי gameCounter
+        const latestGameNumber = gameCounter[currentUser.username];
+        
+        highScores[currentUser.username].forEach((scoreObj, index) => {
+            // בדוק אם זה המשחק האחרון לפי מספר המשחק
+            const isLatestGame = (scoreObj.gameNumber === latestGameNumber);
+            const rowClass = isLatestGame ? 'latest-game' : '';
+            
+            highScoresList.append(`
+                <tr class="${rowClass}">
+                    <td>${scoreObj.gameNumber}</td>
+                    <td>${scoreObj.score}</td>
+                </tr>
+            `);
+        });
+    }
+
+    showScreen('gameOverScreen');
 }
 
 // Stop all game processes
 function stopGame() {
-gameState.isRunning = false;
+    gameState.isRunning = false;
 
-// Clear timers
-clearInterval(gameState.timer);
-clearInterval(gameState.enemyMoveTimer);
-clearInterval(gameState.enemyShootTimer);
-clearInterval(gameState.speedUpTimer);
+    // Clear timers
+    clearInterval(gameState.timer);
+    clearInterval(gameState.enemyMoveTimer);
+    clearInterval(gameState.enemyShootTimer);
+    clearInterval(gameState.speedUpTimer);
 
-// Cancel animation frame
-if (gameState.animationId) {
-    cancelAnimationFrame(gameState.animationId);
-    gameState.animationId = null;
-}
+    // Cancel animation frame
+    if (gameState.animationId) {
+        cancelAnimationFrame(gameState.animationId);
+        gameState.animationId = null;
+    }
 
-// Stop music
-$('#backgroundMusic')[0].pause();
-$('#backgroundMusic')[0].currentTime = 0;
+    // Stop music
+    $('#backgroundMusic')[0].pause();
+    $('#backgroundMusic')[0].currentTime = 0;
 }
 
 // Reset game state
 function resetGame() {
-// עצירה של כל מה שרץ
-stopGame();
+    // עצירה של כל מה שרץ
+    stopGame();
 
-// ניקוי הקנבס
-if (gameElements.gameCanvas) {
-    gameElements.gameCanvas.innerHTML = '';
-}
+    // ניקוי הקנבס
+    if (gameElements.gameCanvas) {
+        gameElements.gameCanvas.innerHTML = '';
+    }
 
-// איפוס כל מערכי המשחק
-gameState.enemies = [];
-gameState.playerBullets = [];
-gameState.enemyBullets = [];
+    // איפוס כל מערכי המשחק
+    gameState.enemies = [];
+    gameState.playerBullets = [];
+    gameState.enemyBullets = [];
 
-// איפוס משתנים
-gameState.score = 0;
-gameState.lives = 3;
-gameState.isRunning = false;
-gameState.timeRemaining = gameConfig.gameTime * 60;
-gameState.speedIncreaseCount = 0;
-gameState.gameOver = false;
-gameElements.playerShip = null;
+    // איפוס משתנים
+    gameState.score = 0;
+    gameState.lives = 3;
+    gameState.isRunning = false;
+    gameState.timeRemaining = gameConfig.gameTime * 60;
+    gameState.speedIncreaseCount = 0;
+    gameState.gameOver = false;
+    gameElements.playerShip = null;
 
-// עדכון הממשק
-$('#score').text('0');
-$('#lives').text('3');
-updateTimer();
+    // עדכון הממשק
+    $('#score').text('0');
+    $('#lives').text('3');
+    updateTimer();
 }

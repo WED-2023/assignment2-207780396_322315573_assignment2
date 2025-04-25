@@ -126,6 +126,30 @@ button:hover {
     background-color: #4589e0;
 }
 
+/* סגנון קישור באתר */
+.project-link {
+    margin: 15px 0;
+}
+
+.project-link a {
+    color: #58a6ff;
+    text-decoration: none;
+    font-weight: bold;
+    padding: 5px 10px;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+.project-link a:hover {
+    background-color: rgba(88, 166, 255, 0.2);
+    text-decoration: underline;
+}
+
+/* עדכון מרווח בלוגו במסך פתיחה */
+.logo-container p {
+    margin-bottom: 8px;
+}
+
 /* Form style */
 .form-group {
     margin-bottom: 12px;
