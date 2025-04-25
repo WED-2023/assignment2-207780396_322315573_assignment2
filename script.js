@@ -3,8 +3,7 @@ let users = [];
 let currentUser = null;
 let gameConfig = {
     shootKey: 32, // Space bar by default
-    gameTime: 2, // minutes
-    // הסרנו את משתנה צבע החללית כי אנחנו משתמשים בתמונה
+    gameTime: 2, // minutes by default
 };
 let gameState = {
     score: 0,
@@ -27,11 +26,10 @@ let gameElements = {
     gameCanvas: null
 };
 let highScores = {};
-let gameCounter = {}; // מונה משחקים לכל משתמש
+let gameCounter = {};
 
 // Initialization and DOM ready
 $(document).ready(function() {
-    // בדיקת תאימות דפדפן ורזולוציה
     checkBrowserCompatibility();
     
     // Initialize default user
@@ -44,25 +42,19 @@ $(document).ready(function() {
         birthDate: '2000-01-01'
     });
 
-    // Populate date dropdowns
     populateDateDropdowns();
 
-    // Screen navigation setup
     setupNavigation();
     
-    // Form submissions
     setupForms();
     
-    // About modal
     setupAboutModal();
     
-    // Game controls
     setupGameControls();
     
-    // Initialize select for shoot key
     populateShootKeyOptions();
     
-    // הגדרת רקע למשחק
+    // background settings
     $('#gameCanvas').css({
         backgroundImage: 'url("background.png")',
         backgroundSize: 'cover',
@@ -70,16 +62,13 @@ $(document).ready(function() {
     });
 });
 
-// בדיקת תאימות דפדפן
 function checkBrowserCompatibility() {
-    // בדיקה אם הדפדפן הוא Chrome
     const isChrome = /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
     
     if (!isChrome) {
         alert('המשחק מותאם לדפדפן Chrome. אנא השתמש בדפדפן Chrome לחוויית משחק מיטבית.');
     }
     
-    // בדיקת רזולוציה
     const screenWidth = window.screen.width;
     const screenHeight = window.screen.height;
     
@@ -168,7 +157,6 @@ function setupForms() {
     $('#registerForm').submit(function(e) {
         e.preventDefault();
         
-        // Get form values
         const username = $('#username').val();
         const password = $('#password').val();
         const confirmPassword = $('#confirmPassword').val();
@@ -179,13 +167,11 @@ function setupForms() {
         const month = $('#birthMonth').val();
         const year = $('#birthYear').val();
         
-        // Validate form
         if (!username || !password || !confirmPassword || !firstName || !lastName || !email || !day || !month || !year) {
             alert('יש למלא את כל השדות');
             return;
         }
         
-        // Validate password
         if (password !== confirmPassword) {
             alert('הסיסמאות אינן תואמות');
             return;
@@ -196,25 +182,21 @@ function setupForms() {
             return;
         }
         
-        // Validate names - no numbers
         if (/[0-9]/.test(firstName) || /[0-9]/.test(lastName)) {
             alert('שם פרטי ושם משפחה אינם יכולים להכיל מספרים');
             return;
         }
         
-        // Validate email
         if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
             alert('כתובת אימייל לא חוקית');
             return;
         }
         
-        // Check if username already exists
         if (users.find(user => user.username === username)) {
             alert('שם המשתמש כבר קיים במערכת');
             return;
         }
         
-        // Create new user
         const newUser = {
             username: username,
             password: password,
@@ -226,10 +208,9 @@ function setupForms() {
         
         users.push(newUser);
         currentUser = newUser;
-        highScores[username] = []; // Initialize empty high scores array for user
-        gameCounter[username] = 0; // אתחול מונה משחקים למשתמש חדש
+        highScores[username] = [];
+        gameCounter[username] = 0;
         
-        // Navigate to configuration screen
         showScreen('configScreen');
     });
     
@@ -240,18 +221,15 @@ function setupForms() {
         const username = $('#loginUsername').val();
         const password = $('#loginPassword').val();
         
-        // Find user
         const user = users.find(u => u.username === username && u.password === password);
         
         if (user) {
             currentUser = user;
             
-            // Initialize high scores for user if needed
             if (!highScores[username]) {
                 highScores[username] = [];
             }
             
-            // אתחול מונה משחקים למשתמש אם צריך
             if (!gameCounter[username]) {
                 gameCounter[username] = 0;
             }
@@ -263,15 +241,12 @@ function setupForms() {
         }
     });
     
-    // Game configuration form
     $('#configForm').submit(function(e) {
         e.preventDefault();
         
-        // Save configuration
         gameConfig.shootKey = parseInt($('#shootKey').val());
         gameConfig.gameTime = parseInt($('#gameTime').val());
         
-        // Start game
         showScreen('gameScreen');
         startGame();
     });
@@ -298,7 +273,6 @@ function setupAboutModal() {
 
 // Setup game controls
 function setupGameControls() {
-    // Keyboard controls for the game
     $(document).keydown(function(e) {
         if (!gameState.isRunning) return;
         
@@ -306,16 +280,16 @@ function setupGameControls() {
         
         // Movement with arrow keys
         switch(key) {
-            case 37: // Left arrow
+            case 37:
                 movePlayerShip('left');
                 break;
-            case 38: // Up arrow
+            case 38:
                 movePlayerShip('up');
                 break;
-            case 39: // Right arrow
+            case 39:
                 movePlayerShip('right');
                 break;
-            case 40: // Down arrow
+            case 40:
                 movePlayerShip('down');
                 break;
         }
@@ -327,12 +301,9 @@ function setupGameControls() {
     });
 }
 
-// Show screen by ID
 function showScreen(screenId) {
-    // Hide all screens
     $('.screen').removeClass('active');
     
-    // Show requested screen
     $(`#${screenId}`).addClass('active');
 }
 
@@ -346,22 +317,16 @@ function startGame() {
 }
 
 function createGameElements() {
-    // Clear game canvas
     $('#gameCanvas').empty();
     
-    // Set game canvas element
     gameElements.gameCanvas = document.getElementById('gameCanvas');
     
-    // יצירת חללית השחקן
     createPlayerShip();
     
-    // יצירת חלליות האויב
     createEnemyShips();
 }
 
-// יצירה מחודשת של חללית השחקן
 function createPlayerShip() {
-    // הסר את החללית הקיימת אם היא קיימת
     if (gameElements.playerShip) {
         gameElements.gameCanvas.removeChild(gameElements.playerShip);
     }
@@ -369,83 +334,66 @@ function createPlayerShip() {
     const playerShip = document.createElement('div');
     playerShip.className = 'spaceship player-spaceship';
     
-    // עדכון סגנון החללית הטובה
     playerShip.style.backgroundImage = 'url("good.png")';
     playerShip.style.backgroundSize = 'contain';
     playerShip.style.backgroundRepeat = 'no-repeat';
     playerShip.style.backgroundPosition = 'center';
     
-    // הסרת הרקע והגבול
     playerShip.style.backgroundColor = 'transparent';
     playerShip.style.border = 'none';
     
-    // מיקום החללית בתחתית המסך ובמרכז
     const canvasWidth = gameElements.gameCanvas.offsetWidth;
-    playerShip.style.left = ((canvasWidth / 2) - 25) + 'px'; // מרכוז (25 זה חצי מרוחב החללית)
-    playerShip.style.bottom = '20px'; // מעט גבוה יותר מהתחתית
+    playerShip.style.left = ((canvasWidth / 2) - 25) + 'px';
+    playerShip.style.bottom = '20px';
     
-    // הוספת החללית לקנבס המשחק
     gameElements.gameCanvas.appendChild(playerShip);
     gameElements.playerShip = playerShip;
     
-    // שים את החללית קדימה
     playerShip.style.zIndex = '100';
     
     return playerShip;
 }
 
-// יצירת חלליות האויבים
 function createEnemyShips() {
-    // מערך תמונות החלליות
     const enemyImages = [
-        'spaceship4.png', // שורה ראשונה (עליונה) - 20 נקודות
-        'spaceship3.png', // שורה שנייה - 15 נקודות
-        'spaceship2.png', // שורה שלישית - 10 נקודות
-        'spaceship1.png'  // שורה רביעית (תחתונה) - 5 נקודות
+        'spaceship4.png',
+        'spaceship3.png',
+        'spaceship2.png',
+        'spaceship1.png'
     ];
     
-    // רוחב הקנבס
     const canvasWidth = gameElements.gameCanvas.offsetWidth;
     
-    // מרווחים מותאמים - מופחתים לפי הבקשה
-    const spacingX = Math.max(60, canvasWidth / 20); // מרווח אופקי מופחת 
-    const spacingY = 60; // מרווח אנכי מופחת מ-70 ל-60
+    const spacingX = Math.max(60, canvasWidth / 20);
+    const spacingY = 60;
     
-    // החלליות יהיו ממוקמות במרכז המסך
-    const totalWidth = spacingX * 5; // רוחב כולל של כל שורת חלליות
-    const leftOffset = (canvasWidth - totalWidth) / 2; // מיקום התחלתי במרכז
-    const topOffset = 20; // מיקום גבוה יותר - מופחת מ-50 ל-20
+    const totalWidth = spacingX * 5;
+    const leftOffset = (canvasWidth - totalWidth) / 2;
+    const topOffset = 20;
     
-    // יצירת 4 שורות של 5 חלליות
     for (let row = 0; row < 4; row++) {
         for (let col = 0; col < 5; col++) {
             const enemy = document.createElement('div');
             enemy.className = 'spaceship enemy-spaceship';
             
-            // הגדרת התמונה לפי השורה
             enemy.style.backgroundImage = `url("${enemyImages[row]}")`;
             enemy.style.backgroundSize = 'contain';
             enemy.style.backgroundRepeat = 'no-repeat';
             enemy.style.backgroundPosition = 'center';
             
-            // הסרת הרקע והגבול
             enemy.style.backgroundColor = 'transparent';
             enemy.style.border = 'none';
             
-            // מיקום החללית
             enemy.style.left = (col * spacingX + leftOffset) + 'px';
             enemy.style.top = (row * spacingY + topOffset) + 'px';
             
             enemy.dataset.row = row;
             
-            // ניקוד לפי שורה
-            const points = (4 - row) * 5; // 20, 15, 10, 5 מלמעלה למטה
+            const points = (4 - row) * 5;
             enemy.dataset.points = points;
             
-            // הוספה לקנבס
             gameElements.gameCanvas.appendChild(enemy);
             
-            // הוספה למערך החלליות
             gameState.enemies.push({
                 element: enemy,
                 row: row,
@@ -457,8 +405,7 @@ function createEnemyShips() {
 }
 
 function startGameTimers() {
-    // Game timer (countdown)
-    gameState.timeRemaining = gameConfig.gameTime * 60; // Convert to seconds
+    gameState.timeRemaining = gameConfig.gameTime * 60;
     updateTimer();
     
     gameState.timer = setInterval(function() {
@@ -472,11 +419,10 @@ function startGameTimers() {
     
 // Enemy movement
 let moveDirection = 'right';
-let moveSpeed = 500; // Initial speed in ms
+let moveSpeed = 500;
 gameState.enemyMoveTimer = setInterval(function() {
     const gameWidth = gameElements.gameCanvas.offsetWidth;
     
-    // Find leftmost and rightmost enemy positions
     let leftmost = 999999;
     let rightmost = 0;
     
@@ -489,14 +435,12 @@ gameState.enemyMoveTimer = setInterval(function() {
         if (relativeLeft + rect.width > rightmost) rightmost = relativeLeft + rect.width;
     });
     
-    // Change direction if hitting wall - רווח קטן יותר בצד ימין
     if (moveDirection === 'right' && rightmost >= gameWidth - 5) {
         moveDirection = 'left';
     } else if (moveDirection === 'left' && leftmost <= 5) {
         moveDirection = 'right';
     }
     
-    // Move all enemies
     gameState.enemies.forEach(enemy => {
         if (moveDirection === 'right') {
             enemy.element.style.left = (parseInt(enemy.element.style.left) + 10) + 'px';
@@ -506,15 +450,12 @@ gameState.enemyMoveTimer = setInterval(function() {
     });
 }, moveSpeed);
 
-// Enemy shooting
 gameState.enemyShootTimer = setInterval(function() {
     if (gameState.enemies.length === 0) return;
     
-    // Select random enemy to shoot
     const randomIndex = Math.floor(Math.random() * gameState.enemies.length);
     const shootingEnemy = gameState.enemies[randomIndex];
     
-    // Check if can shoot (previous bullet passed 3/4 of screen)
     let canShoot = true;
     if (gameState.enemyBullets.length > 0) {
         const lastBullet = gameState.enemyBullets[gameState.enemyBullets.length - 1];
@@ -536,14 +477,13 @@ gameState.enemyShootTimer = setInterval(function() {
 // Speed up timer - every 5 seconds
 gameState.speedUpTimer = setInterval(function() {
     if (gameState.speedIncreaseCount < 4) { // Only speed up 4 times max
-        moveSpeed = Math.max(150, moveSpeed - 70); // Decrease time between moves (faster)
+        moveSpeed = Math.max(150, moveSpeed - 70);
         
         // Clear and restart enemy movement timer with new speed
         clearInterval(gameState.enemyMoveTimer);
         gameState.enemyMoveTimer = setInterval(function() {
             const gameWidth = gameElements.gameCanvas.offsetWidth;
             
-            // Find leftmost and rightmost enemy positions
             let leftmost = 999999;
             let rightmost = 0;
             
@@ -556,14 +496,12 @@ gameState.speedUpTimer = setInterval(function() {
                 if (relativeLeft + rect.width > rightmost) rightmost = relativeLeft + rect.width;
             });
             
-            // Change direction if hitting wall - רווח קטן יותר בצד ימין
             if (moveDirection === 'right' && rightmost >= gameWidth - 5) {
                 moveDirection = 'left';
             } else if (moveDirection === 'left' && leftmost <= 5) {
                 moveDirection = 'right';
             }
             
-            // Move all enemies
             gameState.enemies.forEach(enemy => {
                 if (moveDirection === 'right') {
                     enemy.element.style.left = (parseInt(enemy.element.style.left) + 10) + 'px';
@@ -585,7 +523,6 @@ function animationLoop() {
         const bulletElement = bullet.element;
         const currentTop = parseInt(bulletElement.style.top);
         
-        // Move bullet up
         bulletElement.style.top = (currentTop - 5) + 'px';
         
         // Check if bullet is out of bounds
@@ -595,7 +532,6 @@ function animationLoop() {
             continue;
         }
         
-        // Check for collisions with enemies
         checkBulletEnemyCollisions(bullet);
     }
     
@@ -605,7 +541,6 @@ function animationLoop() {
         const bulletElement = bullet.element;
         const currentTop = parseInt(bulletElement.style.top);
         
-        // Move bullet down
         bulletElement.style.top = (currentTop + 5) + 'px';
         
         // Check if bullet is out of bounds
@@ -615,7 +550,6 @@ function animationLoop() {
             continue;
         }
         
-        // Check for collision with player
         checkBulletPlayerCollision(bullet);
     }
     
@@ -625,7 +559,6 @@ function animationLoop() {
     }
 }
 
-// Start animation loop
 gameState.animationId = requestAnimationFrame(animationLoop);
 }
 
@@ -681,17 +614,15 @@ const gameCanvasRect = gameElements.gameCanvas.getBoundingClientRect();
 const bullet = document.createElement('div');
 bullet.className = 'bullet';
 
-// עדכון גודל וצבע כדור היריה
 bullet.style.width = '8px';
 bullet.style.height = '20px';
-bullet.style.backgroundColor = '#00FFFF'; // צבע זהה לחללית הטובה
+bullet.style.backgroundColor = '#00FFFF';
 
-bullet.style.left = (parseInt(playerShip.style.left) + playerRect.width / 2 - 4) + 'px'; // - 4 כי רוחב הכדור הוא 8
+bullet.style.left = (parseInt(playerShip.style.left) + playerRect.width / 2 - 4) + 'px';
 bullet.style.bottom = (parseInt(playerShip.style.bottom) + playerRect.height) + 'px';
 bullet.style.top = (gameCanvasRect.height - parseInt(bullet.style.bottom)) + 'px';
 gameElements.gameCanvas.appendChild(bullet);
 
-// Add to bullets array
 gameState.playerBullets.push({
     element: bullet
 });
@@ -711,20 +642,18 @@ const gameCanvasRect = gameElements.gameCanvas.getBoundingClientRect();
 const bullet = document.createElement('div');
 bullet.className = 'bullet enemy-bullet';
 
-// עדכון גודל וצבע כדור היריה של האויב
 bullet.style.width = '8px';
 bullet.style.height = '20px';
-bullet.style.backgroundColor = '#FF0000'; // אדום בולט
+bullet.style.backgroundColor = '#FF0000';
 
 // Calculate position
-const relativeLeft = enemyRect.left - gameCanvasRect.left + enemyRect.width / 2 - 4; // - 4 כי רוחב הכדור הוא 8
+const relativeLeft = enemyRect.left - gameCanvasRect.left + enemyRect.width / 2 - 4;
 const relativeTop = enemyRect.top - gameCanvasRect.top + enemyRect.height;
 
 bullet.style.left = relativeLeft + 'px';
 bullet.style.top = relativeTop + 'px';
 gameElements.gameCanvas.appendChild(bullet);
 
-// Add to enemy bullets array
 gameState.enemyBullets.push({
     element: bullet
 });
@@ -770,7 +699,7 @@ for (let i = gameState.enemies.length - 1; i >= 0; i--) {
             endGame('win');
         }
         
-        break; // Exit the loop since bullet is already removed
+        break;
     }
 }
 }
@@ -811,7 +740,7 @@ if (
 }
 }
 
-// Reset player position after being hit
+// Reset player position after hit
 function resetPlayerPosition() {
 const playerShip = gameElements.playerShip;
 const gameCanvas = gameElements.gameCanvas;
@@ -830,7 +759,6 @@ $('#time').text(`${minutes.toString().padStart(2, '0')}:${seconds.toString().pad
 
 // End game
 function endGame(reason) {
-    // Stop game
     stopGame();
 
     // Set game over message
@@ -858,7 +786,6 @@ function endGame(reason) {
 
     // Update high scores if applicable
     if (isHighScore && currentUser) {
-        // קידום מונה המשחקים
         if (!gameCounter[currentUser.username]) {
             gameCounter[currentUser.username] = 0;
         }
@@ -869,14 +796,12 @@ function endGame(reason) {
             highScores[currentUser.username] = [];
         }
         
-        // שמירת הניקוד יחד עם מספר המשחק
         const currentGameNumber = gameCounter[currentUser.username];
         highScores[currentUser.username].push({
             gameNumber: currentGameNumber,
             score: gameState.score
         });
         
-        // מיון ציונים לפי ניקוד - מהגבוה לנמוך
         highScores[currentUser.username].sort((a, b) => b.score - a.score);
     }
 
@@ -889,11 +814,9 @@ function endGame(reason) {
     highScoresList.empty();
 
     if (currentUser && highScores[currentUser.username]) {
-        // מצא את המשחק האחרון לפי gameCounter
         const latestGameNumber = gameCounter[currentUser.username];
         
         highScores[currentUser.username].forEach((scoreObj, index) => {
-            // בדוק אם זה המשחק האחרון לפי מספר המשחק
             const isLatestGame = (scoreObj.gameNumber === latestGameNumber);
             const rowClass = isLatestGame ? 'latest-game' : '';
             
@@ -913,39 +836,32 @@ function endGame(reason) {
 function stopGame() {
     gameState.isRunning = false;
 
-    // Clear timers
     clearInterval(gameState.timer);
     clearInterval(gameState.enemyMoveTimer);
     clearInterval(gameState.enemyShootTimer);
     clearInterval(gameState.speedUpTimer);
 
-    // Cancel animation frame
     if (gameState.animationId) {
         cancelAnimationFrame(gameState.animationId);
         gameState.animationId = null;
     }
 
-    // Stop music
     $('#backgroundMusic')[0].pause();
     $('#backgroundMusic')[0].currentTime = 0;
 }
 
 // Reset game state
 function resetGame() {
-    // עצירה של כל מה שרץ
     stopGame();
 
-    // ניקוי הקנבס
     if (gameElements.gameCanvas) {
         gameElements.gameCanvas.innerHTML = '';
     }
 
-    // איפוס כל מערכי המשחק
     gameState.enemies = [];
     gameState.playerBullets = [];
     gameState.enemyBullets = [];
 
-    // איפוס משתנים
     gameState.score = 0;
     gameState.lives = 3;
     gameState.isRunning = false;
@@ -954,7 +870,6 @@ function resetGame() {
     gameState.gameOver = false;
     gameElements.playerShip = null;
 
-    // עדכון הממשק
     $('#score').text('0');
     $('#lives').text('3');
     updateTimer();

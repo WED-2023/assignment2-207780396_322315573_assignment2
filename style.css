@@ -10,8 +10,8 @@ body {
     background-color: #121212;
     color: #ffffff;
     direction: rtl;
-    min-width: 1366px; /* רזולוציה מינימלית */
-    overflow-x: hidden; /* מונע גלילה אופקית */
+    min-width: 1366px; /* Minimum resolution */
+    overflow-x: hidden; /* Prevents horizontal scrolling */
 }
 
 #wrapper {
@@ -19,7 +19,7 @@ body {
     min-width: 1300px;
     margin: 0 auto;
     padding: 10px;
-    overflow: hidden; /* מונע גלישת תוכן */
+    overflow: hidden;
 }
 
 /* Header */
@@ -79,7 +79,7 @@ nav ul li a:hover {
     padding: 10px;
     min-height: 480px;
     position: relative;
-    overflow: hidden; /* מונע גלישת תוכן */
+    overflow: hidden;
 }
 
 .screen {
@@ -126,7 +126,6 @@ button:hover {
     background-color: #4589e0;
 }
 
-/* סגנון קישור באתר */
 .project-link {
     margin: 15px 0;
 }
@@ -145,7 +144,6 @@ button:hover {
     text-decoration: underline;
 }
 
-/* עדכון מרווח בלוגו במסך פתיחה */
 .logo-container p {
     margin-bottom: 8px;
 }
@@ -186,7 +184,7 @@ input, select {
 /* Game screen */
 #gameScreen {
     position: relative;
-    overflow: hidden; /* מונע גלישת תוכן */
+    overflow: hidden;
 }
 
 .game-status {
@@ -201,9 +199,9 @@ input, select {
 #gameCanvas {
     background-color: #000;
     position: relative;
-    height: 450px; /* גובה מותאם לרזולוציה */
+    height: 450px;
     width: 100%;
-    max-width: 100%; /* לא לחרוג מרוחב האב */
+    max-width: 100%;
     border: 1px solid #333;
     overflow: hidden;
 }
@@ -218,21 +216,19 @@ input, select {
 }
 
 .player-spaceship {
-    /* החללית הטובה */
     width: 50px !important;
     height: 50px !important;
     z-index: 20;
-    background-color: transparent !important; /* ללא רקע */
-    border: none !important; /* ללא גבול */
+    background-color: transparent !important;
+    border: none !important;
 }
 
 .enemy-spaceship {
-    /* חלליות אויב */
     width: 50px !important;
     height: 50px !important;
     opacity: 1;
-    background-color: transparent !important; /* ללא רקע */
-    border: none !important; /* ללא גבול */
+    background-color: transparent !important;
+    border: none !important;
 }
 
 .bullet {
@@ -306,10 +302,10 @@ input, select {
     background-color: #333;
 }
 
-/* סגנון להדגשת השורה האחרונה */
+/* Highlighting current game line */
 #highScoresList .latest-game {
     font-weight: bold;
-    color: #3498db; /* כחול בהיר לבולטות */
+    color: #3498db;
 }
 
 /* Modal style */
