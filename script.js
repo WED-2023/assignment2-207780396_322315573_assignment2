@@ -42,16 +42,22 @@ $(document).ready(function() {
         birthDate: '2000-01-01'
     });
 
+    // Populate date dropdowns
     populateDateDropdowns();
 
+    // Screen navigation setup
     setupNavigation();
     
+    // Form submissions
     setupForms();
     
+    // About modal
     setupAboutModal();
     
+    // Game controls
     setupGameControls();
     
+    // Initialize select for shoot key
     populateShootKeyOptions();
     
     // background settings
@@ -167,11 +173,13 @@ function setupForms() {
         const month = $('#birthMonth').val();
         const year = $('#birthYear').val();
         
+        // Validate form
         if (!username || !password || !confirmPassword || !firstName || !lastName || !email || !day || !month || !year) {
             alert('יש למלא את כל השדות');
             return;
         }
         
+        // Validate password
         if (password !== confirmPassword) {
             alert('הסיסמאות אינן תואמות');
             return;
@@ -182,21 +190,25 @@ function setupForms() {
             return;
         }
         
+        // Validate names - no numbers
         if (/[0-9]/.test(firstName) || /[0-9]/.test(lastName)) {
             alert('שם פרטי ושם משפחה אינם יכולים להכיל מספרים');
             return;
         }
         
+        // Validate email
         if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
             alert('כתובת אימייל לא חוקית');
             return;
         }
         
+        // Check if username already exists
         if (users.find(user => user.username === username)) {
             alert('שם המשתמש כבר קיים במערכת');
             return;
         }
         
+        // Create new user
         const newUser = {
             username: username,
             password: password,
@@ -221,6 +233,7 @@ function setupForms() {
         const username = $('#loginUsername').val();
         const password = $('#loginPassword').val();
         
+        // Find user
         const user = users.find(u => u.username === username && u.password === password);
         
         if (user) {
@@ -241,12 +254,15 @@ function setupForms() {
         }
     });
     
+    // Game configuration form
     $('#configForm').submit(function(e) {
         e.preventDefault();
         
+        // Save configuration
         gameConfig.shootKey = parseInt($('#shootKey').val());
         gameConfig.gameTime = parseInt($('#gameTime').val());
         
+        // Start game
         showScreen('gameScreen');
         startGame();
     });
@@ -273,6 +289,7 @@ function setupAboutModal() {
 
 // Setup game controls
 function setupGameControls() {
+    // Keyboard controls for the game
     $(document).keydown(function(e) {
         if (!gameState.isRunning) return;
         
@@ -280,7 +297,7 @@ function setupGameControls() {
         
         // Movement with arrow keys
         switch(key) {
-            case 37:
+            case 37: 
                 movePlayerShip('left');
                 break;
             case 38:
@@ -302,8 +319,10 @@ function setupGameControls() {
 }
 
 function showScreen(screenId) {
+    // Hide all screens
     $('.screen').removeClass('active');
     
+    // Show requested screen
     $(`#${screenId}`).addClass('active');
 }
 
@@ -435,12 +454,14 @@ gameState.enemyMoveTimer = setInterval(function() {
         if (relativeLeft + rect.width > rightmost) rightmost = relativeLeft + rect.width;
     });
     
+    // Change direction if hitting wall
     if (moveDirection === 'right' && rightmost >= gameWidth - 5) {
         moveDirection = 'left';
     } else if (moveDirection === 'left' && leftmost <= 5) {
         moveDirection = 'right';
     }
     
+    // Move all enemies
     gameState.enemies.forEach(enemy => {
         if (moveDirection === 'right') {
             enemy.element.style.left = (parseInt(enemy.element.style.left) + 10) + 'px';
@@ -450,12 +471,15 @@ gameState.enemyMoveTimer = setInterval(function() {
     });
 }, moveSpeed);
 
+// Enemy shooting
 gameState.enemyShootTimer = setInterval(function() {
     if (gameState.enemies.length === 0) return;
     
+    // Select random enemy to shoot
     const randomIndex = Math.floor(Math.random() * gameState.enemies.length);
     const shootingEnemy = gameState.enemies[randomIndex];
     
+    // Check if can shoot (previous bullet passed 3/4 of screen)
     let canShoot = true;
     if (gameState.enemyBullets.length > 0) {
         const lastBullet = gameState.enemyBullets[gameState.enemyBullets.length - 1];
@@ -496,12 +520,14 @@ gameState.speedUpTimer = setInterval(function() {
                 if (relativeLeft + rect.width > rightmost) rightmost = relativeLeft + rect.width;
             });
             
+            // Change direction if hitting wall
             if (moveDirection === 'right' && rightmost >= gameWidth - 5) {
                 moveDirection = 'left';
             } else if (moveDirection === 'left' && leftmost <= 5) {
                 moveDirection = 'right';
             }
             
+            // Move all enemies
             gameState.enemies.forEach(enemy => {
                 if (moveDirection === 'right') {
                     enemy.element.style.left = (parseInt(enemy.element.style.left) + 10) + 'px';
@@ -532,6 +558,7 @@ function animationLoop() {
             continue;
         }
         
+        // Check for collisions with enemies
         checkBulletEnemyCollisions(bullet);
     }
     
@@ -550,6 +577,7 @@ function animationLoop() {
             continue;
         }
         
+        // Check for collision with player
         checkBulletPlayerCollision(bullet);
     }
     
@@ -559,6 +587,7 @@ function animationLoop() {
     }
 }
 
+// Start animation loop
 gameState.animationId = requestAnimationFrame(animationLoop);
 }
 
@@ -623,6 +652,7 @@ bullet.style.bottom = (parseInt(playerShip.style.bottom) + playerRect.height) + 
 bullet.style.top = (gameCanvasRect.height - parseInt(bullet.style.bottom)) + 'px';
 gameElements.gameCanvas.appendChild(bullet);
 
+// Add to bullets array
 gameState.playerBullets.push({
     element: bullet
 });
@@ -654,6 +684,7 @@ bullet.style.left = relativeLeft + 'px';
 bullet.style.top = relativeTop + 'px';
 gameElements.gameCanvas.appendChild(bullet);
 
+// Add to enemy bullets array
 gameState.enemyBullets.push({
     element: bullet
 });
@@ -699,7 +730,7 @@ for (let i = gameState.enemies.length - 1; i >= 0; i--) {
             endGame('win');
         }
         
-        break;
+        break; // Exit the loop since bullet is already removed
     }
 }
 }
@@ -740,7 +771,7 @@ if (
 }
 }
 
-// Reset player position after hit
+// Reset player position after being hit
 function resetPlayerPosition() {
 const playerShip = gameElements.playerShip;
 const gameCanvas = gameElements.gameCanvas;
@@ -759,6 +790,7 @@ $('#time').text(`${minutes.toString().padStart(2, '0')}:${seconds.toString().pad
 
 // End game
 function endGame(reason) {
+    // Stop game
     stopGame();
 
     // Set game over message
@@ -791,7 +823,6 @@ function endGame(reason) {
         }
         gameCounter[currentUser.username]++;
         
-        // Add score to user's high scores
         if (!highScores[currentUser.username]) {
             highScores[currentUser.username] = [];
         }
@@ -836,16 +867,19 @@ function endGame(reason) {
 function stopGame() {
     gameState.isRunning = false;
 
+    // Clear timers
     clearInterval(gameState.timer);
     clearInterval(gameState.enemyMoveTimer);
     clearInterval(gameState.enemyShootTimer);
     clearInterval(gameState.speedUpTimer);
 
+    // Cancel animation frame
     if (gameState.animationId) {
         cancelAnimationFrame(gameState.animationId);
         gameState.animationId = null;
     }
 
+    // Stop music
     $('#backgroundMusic')[0].pause();
     $('#backgroundMusic')[0].currentTime = 0;
 }
